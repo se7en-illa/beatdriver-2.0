@@ -2,18 +2,6 @@
 
 import * as htmlToImage from "html-to-image";
 import React, { useState, useEffect, createRef } from "react";
-import {
-  updateGrid,
-  updateBeat,
-  updateUID,
-  updateSoundArr,
-  updateColor,
-  updatePlay,
-} from "../../lib/utils/dispatch";
-//redux
-import { useSelector } from "react-redux";
-
-//components
 import Looper from "../../components/board/Looper";
 import TopToolbar from "../../components/toolbar/TopToolbar";
 import EffectsMenu from "../../components/effectsmenu/EffectsMenu";
@@ -53,20 +41,6 @@ const initialGrid = [
 
 const Board = () => {
   const router = useRouter();
-  const { grid, uniqueID, playing, name, bpm, mute, masterVolume } =
-    useSelector((state) => state.projectInfo);
-  const {
-    selectedInstrument,
-    colorInstrument,
-    selected,
-    beat,
-    soundArray,
-    chorus,
-    phaser,
-    tremolo,
-    moog,
-  } = useSelector((state) => state.instruments);
-
   //authentication + user info
   const [user] = useAuthState(auth);
   const dbRef = collection(database, "users");
@@ -75,7 +49,45 @@ const Board = () => {
   if (user) {
     currentUser = docs?.find((doc) => doc.email === user.email);
   }
-
+  //instruments
+  const [selectedInstrument, setSelectedInstrument] = useState("selected");
+  const [colorInstrument, setColorInstrument] = useState("");
+  const [selected, setSelected] = useState("SELECTED");
+  const [beat, setBeat] = useState(0);
+  const [soundArray, setSoundArray] = useState([]);
+  const [chorus, setChorus] = useState({
+    rate: 0,
+    delay: 0,
+    feedback: 0,
+    bypass: 0,
+  });
+  const [phaser, setPhaser] = useState({
+    rate: 0.1, //0.01 to 8 is a decent range, but higher values are possible
+    depth: 0, //0 to 1
+    feedback: 0, //0 to 1+
+    stereoPhase: 0, //0 to 180
+    baseModulationFrequency: 700, //500 to 1500
+    bypass: 0,
+  });
+  const [tremolo, setTremolo] = useState({
+    intensity: 0, //0 to 1
+    rate: 0.001, //0.001 to 8
+    stereoPhase: 0, //0 to 180
+    bypass: 0,
+  });
+  const [moog, setMoog] = useState({
+    cutoff: 0.0, //0 to 1
+    resonance: 0, //0 to 4
+    bufferSize: 4096, //256 to 16384
+  });
+  //project info
+  const [grid, setGrid] = useState(initialGrid); //project board
+  const [uniqueID, setUniqueID] = useState(null); //project id
+  const [playing, setPlaying] = useState(false); //audio player
+  const [name, setName] = useState("Untitled"); //project name
+  const [bpm, setBpm] = useState(120); //tempo
+  const [mute] = useState(false); //mute button
+  const [masterVolume, setMasterVolume] = useState(1); //master vol
   const ref = createRef(null);
   const dbInstance = query(
     collection(database, "projects"),
@@ -96,7 +108,7 @@ const Board = () => {
         };
       }
     }
-    updateGrid(gridCopy);
+    setGrid(gridCopy);
   }, []);
 
   const handleSave = async () => {
@@ -130,7 +142,7 @@ const Board = () => {
         moog: moog,
       });
 
-      updateUID(newProject.id);
+      setUniqueID(newProject.id);
 
       await setDoc(
         doc(database, `projects/${newProject.id}`),
@@ -160,19 +172,19 @@ const Board = () => {
     if (!findSample) {
       let arrayCopy = [...soundArray];
       arrayCopy.push(value);
-      updateSoundArr(arrayCopy);
+      setSoundArray(arrayCopy);
     }
     setVal(value);
   };
 
   useEffect(() => {
     const idx = soundArray.indexOf(val);
-    updateBeat(idx);
-    updateColor(selectedInstrument);
+    setBeat(idx);
+    setColorInstrument(selectedInstrument);
   }, [soundArray, val, beat, selectedInstrument]);
 
   const togglePlaying = () => {
-    updatePlay((prev) => !prev);
+    setPlaying((prev) => !prev);
   };
 
   return (
