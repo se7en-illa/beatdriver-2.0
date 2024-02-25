@@ -1,13 +1,10 @@
 "use client";
-
-import * as htmlToImage from "html-to-image";
 import React, { useState, useEffect, createRef } from "react";
-
-
 //redux
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../lib/utils/dispatch";
-
+//image capture
+import * as htmlToImage from "html-to-image";
 //components
 import Looper from "../../components/board/Looper";
 import TopToolbar from "../../components/toolbar/TopToolbar";

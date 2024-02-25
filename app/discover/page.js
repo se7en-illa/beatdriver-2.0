@@ -1,8 +1,10 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { collection, getDocs, where, query } from "firebase/firestore";
-import { database } from "../../utils/firebase";
+import { database } from "../../lib/firebase/firebase";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
 const isPublicQuery = query(
