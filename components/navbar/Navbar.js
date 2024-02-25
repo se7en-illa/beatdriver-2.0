@@ -1,10 +1,14 @@
 "use client";
-
+// react/next
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-//firebase imports
+// redux
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../lib/redux/slices/userSlice/userSlice";
+import { setAuth } from "../../lib/redux/slices/userSlice/authSlice";
+// firebase
 import { auth } from "../../lib/firebase/firebase";
 import {
   signInWithPopup,
@@ -18,13 +22,22 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 
 function Navbar() {
   const router = useRouter();
-  const googleAuth = new GoogleAuthProvider();
-  const [userGoogleInfo] = useAuthState(auth);
+  const dispatch = useDispatch();
+  // database
   const dbInstance = collection(database, "users");
   const [docs] = useCollectionData(dbInstance);
+  // authentication
+  const googleAuth = new GoogleAuthProvider();
+  const [userGoogleInfo] = useAuthState(auth);
+  const reduxUser = useSelector((state) => state.user.userInfo);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   let currentUser;
   if (userGoogleInfo) {
     currentUser = docs?.find((doc) => doc.email === userGoogleInfo.email);
+    dispatch(setUser(currentUser));
+    dispatch(setAuth(true));
+    console.log(reduxUser);
   }
 
   const login = async () => {
@@ -33,6 +46,9 @@ function Navbar() {
       const { isNewUser } = getAdditionalUserInfo(result);
       if (isNewUser) {
         await addUser(user.uid, user.displayName, user.email, user.photoURL);
+        dispatch(setUser(user));
+        dispatch(setAuth(true));
+        console.log(reduxUser);
       } else {
         console.log("User already exists");
       }
@@ -57,6 +73,8 @@ function Navbar() {
 
   const handleSignOut = () => {
     auth.signOut();
+    dispatch(setUser(null));
+    dispatch(setAuth(false));
     router.push("/");
   };
 

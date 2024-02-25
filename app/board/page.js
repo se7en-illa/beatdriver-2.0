@@ -9,7 +9,6 @@ import * as htmlToImage from "html-to-image";
 import Looper from "../../components/board/Looper";
 import TopToolbar from "../../components/toolbar/TopToolbar";
 import EffectsMenu from "../../components/effectsmenu/EffectsMenu";
-
 //firebase imports
 import {
   collection,
@@ -34,7 +33,7 @@ const buttonState = {
   instrument: "",
 };
 
-// //sets up how big the grid will be
+//sets up how big the grid will be
 const initialGrid = [
   new Array(8).fill(buttonState),
   new Array(8).fill(buttonState),
@@ -65,14 +64,14 @@ const Board = () => {
   const [playing, setPlaying] = useState(false);
 
   //authentication + user info
-  const [user] = useAuthState(auth);
-  const dbRef = collection(database, "users");
-  const [docs] = useCollectionData(dbRef);
-  let currentUser;
-  if (user) {
-    currentUser = docs?.find((doc) => doc.email === user.email);
-  }
-
+  // const [user] = useAuthState(auth);
+  // const dbRef = collection(database, "users");
+  // const [docs] = useCollectionData(dbRef);
+  // let currentUser;
+  // if (user) {
+  //   currentUser = docs?.find((doc) => doc.email === user.email);
+  // }
+  const user = useSelector((state) => state.user.userInfo);
   const ref = createRef(null);
   const dbInstance = query(
     collection(database, "projects"),
