@@ -17,8 +17,8 @@ if (typeof window !== "undefined") {
   tuna = new Tuna(audioContext);
 }
 
-const Looper = ({ steps }) => {
-  const { grid, playing, bpm, masterVolume } = useSelector(
+const Looper = ({ steps, grid, setGrid }) => {
+  const { playing, bpm, masterVolume } = useSelector(
     (state) => state.projectInfo
   );
   const {
@@ -32,7 +32,6 @@ const Looper = ({ steps }) => {
     tremolo,
     moog,
   } = useSelector((state) => state.instruments);
-  const { updateGrid } = useAppDispatch();
   const [currButton, setCurrButton] = useState(0);
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
@@ -158,7 +157,7 @@ const Looper = ({ steps }) => {
       gridCopy[row][col] = cellCopy;
 
       // Dispatch the updated grid
-      updateGrid(gridCopy);
+      setGrid(gridCopy);
     }
   };
 
@@ -183,7 +182,7 @@ const Looper = ({ steps }) => {
         }
       }
     }
-    updateGrid(gridCopy);
+    setGrid(gridCopy);
   };
 
   // const nextButton = (currButton) => {

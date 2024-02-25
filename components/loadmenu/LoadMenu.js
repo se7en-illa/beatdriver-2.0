@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 //redux
 import { useAppDispatch } from "../../lib/utils/dispatch";
 
-function LoadMenu({ projects }) {
-  const { updateGrid, updateUID, updateName } = useAppDispatch();
+function LoadMenu({ projects, grid, setGrid }) {
+  const { updateUID, updateName } = useAppDispatch();
   const router = useRouter();
   // const handleLoad = (project) => {
   //   const objGrid = project.grid;
@@ -32,7 +32,7 @@ function LoadMenu({ projects }) {
 
     updateUID(project.projectId);
     updateName(project.name);
-    updateGrid(loadGrid);
+    setGrid(loadGrid);
     router.push({
       pathname: `/board/[id]`,
       query: { id: project.projectId },

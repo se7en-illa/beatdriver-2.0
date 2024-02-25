@@ -30,11 +30,27 @@ import { useRouter } from "next/navigation";
 
 /* THE BOARD*/
 const steps = 8;
+const buttonState = {
+  triggered: false,
+  activated: false,
+  audio: "",
+  instrument: "",
+};
+
+// //sets up how big the grid will be
+const initialGrid = [
+  new Array(8).fill(buttonState),
+  new Array(8).fill(buttonState),
+  new Array(8).fill(buttonState),
+  new Array(8).fill(buttonState),
+  new Array(8).fill(buttonState),
+];
 
 const Board = () => {
   const router = useRouter();
-  const { grid, uniqueID, playing, name, bpm, mute, masterVolume } =
-    useSelector((state) => state.projectInfo);
+  const { uniqueID, playing, name, bpm, mute, masterVolume } = useSelector(
+    (state) => state.projectInfo
+  );
   const {
     selectedInstrument,
     colorInstrument,
@@ -46,14 +62,9 @@ const Board = () => {
     tremolo,
     moog,
   } = useSelector((state) => state.instruments);
-  const {
-    updateGrid,
-    updateBeat,
-    updateUID,
-    updateSoundArr,
-    updateColor,
-    updatePlay,
-  } = useAppDispatch();
+  const { updateBeat, updateUID, updateSoundArr, updateColor, updatePlay } =
+    useAppDispatch();
+  const [grid, setGrid] = useState(initialGrid);
 
   //authentication + user info
   const [user] = useAuthState(auth);
@@ -84,7 +95,7 @@ const Board = () => {
         };
       }
     }
-    updateGrid(gridCopy);
+    setGrid(gridCopy);
   }, []);
 
   const handleSave = async () => {
@@ -176,10 +187,17 @@ const Board = () => {
               user={user}
               handleSave={handleSave}
               togglePlaying={togglePlaying}
+              grid={grid}
+              setGrid={setGrid}
             />
           </div>
           <div ref={ref}>
-            <Looper playing={playing} steps={steps} />
+            <Looper
+              playing={playing}
+              steps={steps}
+              grid={grid}
+              setGrid={setGrid}
+            />
           </div>
         </div>
 

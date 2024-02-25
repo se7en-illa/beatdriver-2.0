@@ -20,12 +20,14 @@ function TopToolbar({
   currentUser,
   user,
   handleSave,
-  togglePlaying,
+  grid,
+  setGrid,
 }) {
-  const { grid, playing, name, bpm, masterVolume } = useSelector(
+  const { playing, name, bpm, masterVolume } = useSelector(
     (state) => state.projectInfo
   );
-  const { updateGrid, updateMasterVol, updateName } = useAppDispatch();
+  const { updateMasterVol, updateName, updateBPM, togglePlaying } =
+    useAppDispatch();
 
   const [showInputEle, setShowInputEle] = useState(false);
   const [open, setOpen] = useState(false);
@@ -55,7 +57,7 @@ function TopToolbar({
       }))
     );
 
-    updateGrid(gridCopy);
+    setGrid(gridCopy);
   };
 
   const notLoggedIn = () => (user ? handleSave() : setOpen(true));
@@ -121,7 +123,7 @@ function TopToolbar({
       </Popup>
       {/* LOAD MENU */}
       <div className="hover:scale-110">
-        <LoadMenu projects={projects} />
+        <LoadMenu projects={projects} grid={grid} setGrid={setGrid} />
       </div>
 
       {/* SOUND MENU */}
