@@ -9,10 +9,26 @@ import { useAppDispatch } from "../../lib/utils/dispatch";
 function LoadMenu({ projects }) {
   const { updateGrid, updateUID, updateName } = useAppDispatch();
   const router = useRouter();
+  // const handleLoad = (project) => {
+  //   const objGrid = project.grid;
+  //   const orderedKeys = Object.keys(objGrid).sort();
+  //   const loadGrid = orderedKeys.map((row) => objGrid[row]);
+
+  //   updateUID(project.projectId);
+  //   updateName(project.name);
+  //   updateGrid(loadGrid);
+  //   router.push({
+  //     pathname: `/board/[id]`,
+  //     query: { id: project.projectId },
+  //   });
+  // };
+
   const handleLoad = (project) => {
     const objGrid = project.grid;
     const orderedKeys = Object.keys(objGrid).sort();
-    const loadGrid = orderedKeys.map((row) => objGrid[row]);
+    const loadGrid = orderedKeys.map((row) =>
+      objGrid[row].map((cell) => ({ ...cell }))
+    );
 
     updateUID(project.projectId);
     updateName(project.name);

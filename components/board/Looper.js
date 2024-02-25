@@ -3,6 +3,9 @@ import React, { useState, useEffect, useRef } from "react";
 import Grid from "./Grid";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
+//redux
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../lib/utils/dispatch";
 
 let audioContext;
 let tuna;
@@ -14,23 +17,22 @@ if (typeof window !== "undefined") {
   tuna = new Tuna(audioContext);
 }
 
-const Looper = ({
-  bpm,
-  playing,
-  beat,
-  grid,
-  setGrid,
-  steps,
-  selectedInstrument,
-  colorInstrument,
-  selected,
-  masterVolume,
-  soundArray,
-  chorus,
-  phaser,
-  tremolo,
-  moog,
-}) => {
+const Looper = ({ steps }) => {
+  const { grid, playing, bpm, masterVolume } = useSelector(
+    (state) => state.projectInfo
+  );
+  const {
+    selectedInstrument,
+    colorInstrument,
+    selected,
+    beat,
+    soundArray,
+    chorus,
+    phaser,
+    tremolo,
+    moog,
+  } = useSelector((state) => state.instruments);
+  const { updateGrid } = useAppDispatch();
   const [currButton, setCurrButton] = useState(0);
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
@@ -125,47 +127,88 @@ const Looper = ({
   };
   //end audio things
 
+  // const toggleActivation = (row, col) => {
+  //   if (selected === "SELECTED") {
+  //     setOpen(true);
+  //   } else {
+  //     const gridCopy = [...grid];
+  //     const { triggered, activated } = gridCopy[row][col];
+  //     gridCopy[row][col] = {
+  //       triggered,
+  //       activated: !activated,
+  //       audio: beat,
+  //       instrument: colorInstrument,
+  //     };
+  //     updateGrid(gridCopy);
+  //   }
+  // };
+
   const toggleActivation = (row, col) => {
     if (selected === "SELECTED") {
       setOpen(true);
     } else {
-      const gridCopy = [...grid];
-      const { triggered, activated } = gridCopy[row][col];
-      gridCopy[row][col] = {
-        triggered,
-        activated: !activated,
-        audio: beat,
-        instrument: colorInstrument,
-      };
-      setGrid(gridCopy);
+      // Create a deep copy of the grid
+      const gridCopy = grid.map((row) => row.map((cell) => ({ ...cell })));
+
+      // Update the specified cell in the grid copy
+      const cellCopy = { ...gridCopy[row][col] };
+      cellCopy.activated = !cellCopy.activated;
+      cellCopy.audio = beat;
+      cellCopy.instrument = colorInstrument;
+      gridCopy[row][col] = cellCopy;
+
+      // Dispatch the updated grid
+      updateGrid(gridCopy);
     }
   };
 
   //this is what goes through the loop and triggers each row
   //if a button is triggered and already activated (by user) then it plays the sample
   const nextButton = (currButton) => {
-    for (let i = 0; i < grid.length; i++) {
-      for (let j = 0; j < grid[i].length; j++) {
-        const { activated, audio, instrument } = grid[i][j];
-        grid[i][j] = {
-          activated,
+    const gridCopy = grid.map((row) => row.map((cell) => ({ ...cell })));
+    for (let i = 0; i < gridCopy.length; i++) {
+      for (let j = 0; j < gridCopy[i].length; j++) {
+        gridCopy[i][j] = {
+          ...gridCopy[i][j],
           triggered: j === currButton,
-          audio,
-          instrument,
         };
 
         if (
-          grid[i][j].triggered &&
-          grid[i][j].activated &&
-          grid[i][j].audio !== ""
+          gridCopy[i][j].triggered &&
+          gridCopy[i][j].activated &&
+          gridCopy[i][j].audio !== ""
         ) {
           //plays the sound associated with the button
-          playAudio(samples[grid[i][j].audio], 0);
+          playAudio(samples[gridCopy[i][j].audio], 0);
         }
       }
     }
-    setGrid(grid);
+    updateGrid(gridCopy);
   };
+
+  // const nextButton = (currButton) => {
+  //   for (let i = 0; i < grid.length; i++) {
+  //     for (let j = 0; j < grid[i].length; j++) {
+  //       const { activated, audio, instrument } = grid[i][j];
+  //       grid[i][j] = {
+  //         activated,
+  //         triggered: j === currButton,
+  //         audio,
+  //         instrument,
+  //       };
+
+  //       if (
+  //         grid[i][j].triggered &&
+  //         grid[i][j].activated &&
+  //         grid[i][j].audio !== ""
+  //       ) {
+  //         //plays the sound associated with the button
+  //         playAudio(samples[grid[i][j].audio], 0);
+  //       }
+  //     }
+  //   }
+  //   updateGrid(grid);
+  // };
 
   //timer of the loop, sets what rows are triggered
   useEffect(() => {

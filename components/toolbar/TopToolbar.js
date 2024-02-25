@@ -18,33 +18,43 @@ function TopToolbar({
   projects,
   handleBeatChange,
   currentUser,
-  playing,
-  player,
   user,
   handleSave,
   togglePlaying,
 }) {
-  const { grid, uniqueID, playing, name, bpm, masterVolume } = useSelector(
+  const { grid, playing, name, bpm, masterVolume } = useSelector(
     (state) => state.projectInfo
   );
-  const { selected, beat } = useSelector((state) => state.instruments);
   const { updateGrid, updateMasterVol, updateName } = useAppDispatch();
 
   const [showInputEle, setShowInputEle] = useState(false);
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
 
+  // const handleClear = () => {
+  //   const gridCopy = [...grid];
+  //   for (let i = 0; i < grid.length; i++) {
+  //     for (let j = 0; j < grid[i].length; j++) {
+  //       gridCopy[i][j] = {
+  //         triggered: false,
+  //         activated: false,
+  //         audio: "",
+  //       };
+  //     }
+  //   }
+  //   updateGrid(gridCopy);
+  // };
+
   const handleClear = () => {
-    const gridCopy = [...grid];
-    for (let i = 0; i < grid.length; i++) {
-      for (let j = 0; j < grid[i].length; j++) {
-        gridCopy[i][j] = {
-          triggered: false,
-          activated: false,
-          audio: "",
-        };
-      }
-    }
+    const gridCopy = grid.map((row) =>
+      row.map((cell) => ({
+        ...cell,
+        triggered: false,
+        activated: false,
+        audio: "",
+      }))
+    );
+
     updateGrid(gridCopy);
   };
 

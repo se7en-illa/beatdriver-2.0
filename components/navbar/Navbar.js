@@ -1,9 +1,11 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 //firebase imports
-import { auth } from "../../../utils/firebase";
+import { auth } from "../../lib/firebase/firebase";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -11,7 +13,7 @@ import {
 } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { database } from "../../../utils/firebase";
+import { database } from "../../lib/firebase/firebase";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
 function Navbar() {

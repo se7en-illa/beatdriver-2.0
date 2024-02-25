@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { Knob } from "primereact/knob";
 // chorus, phaser, reverb, tremolo + mute effect button
+//redux
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../lib/utils/dispatch";
 
-function EffectsMenu({
-  chorus,
-  phaser,
-  tremolo,
-  setPhaser,
-  setChorus,
-  setTremolo,
-  moog,
-  setMoog,
-}) {
+function EffectsMenu() {
+  const { chorus, phaser, tremolo, moog } = useSelector(
+    (state) => state.instruments
+  );
+  const { updateTremolo, updateMoog, updateChorus, updatePhaser } =
+    useAppDispatch();
   return (
     <div className="grid grid-cols-2 place-items-center p-5">
       {/* 
@@ -44,7 +43,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={chorus.rate}
               onChange={(e) =>
-                setChorus({
+                updateChorus({
                   rate: e.value,
                   delay: chorus.delay,
                   feedback: chorus.feedback,
@@ -64,7 +63,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={Math.round(chorus.delay * 1000)}
               onChange={(e) =>
-                setChorus({
+                updateChorus({
                   rate: chorus.rate,
                   delay: e.value / 1000,
                   feedback: chorus.feedback,
@@ -84,7 +83,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={Math.round(chorus.feedback * 100)}
               onChange={(e) =>
-                setChorus({
+                updateChorus({
                   rate: chorus.rate,
                   delay: chorus.delay,
                   feedback: chorus.feedback,
@@ -125,7 +124,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={phaser.rate}
               onChange={(e) =>
-                setPhaser({
+                updatePhaser({
                   rate: e.value,
                   depth: phaser.depth,
                   feedback: phaser.feedback,
@@ -147,7 +146,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={Math.round(phaser.depth * 100)}
               onChange={(e) =>
-                setPhaser({
+                updatePhaser({
                   rate: phaser.rate,
                   depth: e.value / 100,
                   feedback: phaser.feedback,
@@ -169,7 +168,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={Math.round(phaser.feedback * 100)}
               onChange={(e) =>
-                setPhaser({
+                updatePhaser({
                   rate: phaser.rate,
                   depth: phaser.depth,
                   feedback: e.value / 100,
@@ -193,7 +192,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={phaser.stereoPhase}
               onChange={(e) =>
-                setPhaser({
+                updatePhaser({
                   rate: phaser.rate,
                   depth: phaser.depth,
                   feedback: phaser.feedback,
@@ -215,7 +214,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={phaser.baseModulationFrequency}
               onChange={(e) =>
-                setPhaser({
+                updatePhaser({
                   rate: phaser.rate,
                   depth: phaser.depth,
                   feedback: phaser.feedback,
@@ -257,7 +256,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={Math.round(tremolo.intensity * 100)}
               onChange={(e) =>
-                setTremolo({
+                updateTremolo({
                   intensity: e.value / 100,
                   rate: tremolo.rate,
                   stereoPhase: tremolo.stereoPhase,
@@ -277,7 +276,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={tremolo.rate}
               onChange={(e) =>
-                setTremolo({
+                updateTremolo({
                   intensity: tremolo.intensity,
                   rate: e.value,
                   stereoPhase: tremolo.stereoPhase,
@@ -297,7 +296,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={tremolo.stereoPhase}
               onChange={(e) =>
-                setTremolo({
+                updateTremolo({
                   intensity: tremolo.intensity,
                   rate: tremolo.rate,
                   stereoPhase: tremolo.stereoPhase,
@@ -339,7 +338,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={Math.round(moog.cutoff * 1000)}
               onChange={(e) =>
-                setMoog({
+                updateMoog({
                   cutoff: e.value / 1000,
                   resonance: moog.resonance,
                   bufferSize: moog.bufferSize,
@@ -358,7 +357,7 @@ function EffectsMenu({
               textColor={"WHITE"}
               value={Math.round(moog.resonance * 100)}
               onChange={(e) =>
-                setMoog({
+                updateMoog({
                   cutoff: moog.cutoff,
                   resonance: e.value / 100,
                   bufferSize: moog.bufferSize,

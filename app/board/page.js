@@ -2,10 +2,11 @@
 
 import * as htmlToImage from "html-to-image";
 import React, { useState, useEffect, createRef } from "react";
-import { useAppDispatch } from "../../lib/utils/dispatch";
+
 
 //redux
 import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../lib/utils/dispatch";
 
 //components
 import Looper from "../../components/board/Looper";
@@ -169,65 +170,21 @@ const Board = () => {
           <div className="col-span-8 bg-black">
             {/* TOOLBAR */}
             <TopToolbar
-              beat={beat}
-              setBeat={setBeat}
               projects={projects}
-              grid={grid}
-              setGrid={setGrid}
-              setUniqueID={setUniqueID}
-              uniqueID={uniqueID}
               handleBeatChange={handleBeatChange}
-              currentUser={currentUser}
-              setSelectedInstrument={setSelectedInstrument}
               playing={playing}
-              setPlaying={setPlaying}
-              bpm={bpm}
-              setBpm={setBpm}
-              selected={selected}
-              setSelected={setSelected}
               user={user}
               handleSave={handleSave}
-              name={name}
-              setName={setName}
               togglePlaying={togglePlaying}
-              masterVolume={masterVolume}
-              setMasterVolume={setMasterVolume}
             />
           </div>
           <div ref={ref}>
-            <Looper
-              bpm={bpm}
-              playing={playing}
-              beat={beat}
-              steps={steps}
-              grid={grid}
-              setGrid={setGrid}
-              uniqueID={uniqueID}
-              handleSave={handleSave}
-              selectedInstrument={selectedInstrument}
-              colorInstrument={colorInstrument}
-              selected={selected}
-              masterVolume={masterVolume}
-              soundArray={soundArray}
-              chorus={chorus}
-              phaser={phaser}
-              tremolo={tremolo}
-              moog={moog}
-            />
+            <Looper playing={playing} steps={steps} />
           </div>
         </div>
 
         <div className="col-span-4 ml-4 bg-slate-900">
-          <EffectsMenu
-            chorus={chorus}
-            phaser={phaser}
-            tremolo={tremolo}
-            setChorus={setChorus}
-            setPhaser={setPhaser}
-            setTremolo={setTremolo}
-            moog={moog}
-            setMoog={setMoog}
-          />
+          <EffectsMenu />
         </div>
       </div>
     </div>
