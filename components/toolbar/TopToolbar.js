@@ -22,12 +22,11 @@ function TopToolbar({
   handleSave,
   grid,
   setGrid,
+  playing,
+  togglePlaying,
 }) {
-  const { playing, name, bpm, masterVolume } = useSelector(
-    (state) => state.projectInfo
-  );
-  const { updateMasterVol, updateName, updateBPM, togglePlaying } =
-    useAppDispatch();
+  const { name, bpm, masterVolume } = useSelector((state) => state.projectInfo);
+  const { updateMasterVol, updateName, updateBPM } = useAppDispatch();
 
   const [showInputEle, setShowInputEle] = useState(false);
   const [open, setOpen] = useState(false);

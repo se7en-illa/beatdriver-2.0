@@ -48,7 +48,7 @@ const initialGrid = [
 
 const Board = () => {
   const router = useRouter();
-  const { uniqueID, playing, name, bpm, mute, masterVolume } = useSelector(
+  const { uniqueID, name, bpm, mute, masterVolume } = useSelector(
     (state) => state.projectInfo
   );
   const {
@@ -62,9 +62,10 @@ const Board = () => {
     tremolo,
     moog,
   } = useSelector((state) => state.instruments);
-  const { updateBeat, updateUID, updateSoundArr, updateColor, updatePlay } =
+  const { updateBeat, updateUID, updateSoundArr, updateColor } =
     useAppDispatch();
   const [grid, setGrid] = useState(initialGrid);
+  const [playing, setPlaying] = useState(false);
 
   //authentication + user info
   const [user] = useAuthState(auth);
@@ -171,7 +172,7 @@ const Board = () => {
   }, [soundArray, val, beat, selectedInstrument]);
 
   const togglePlaying = () => {
-    updatePlay((prev) => !prev);
+    setPlaying((prev) => !prev);
   };
 
   return (
