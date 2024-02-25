@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { useAppDispatch } from "../../lib/utils/dispatch";
+
+//redux
+import { useSelector } from "react-redux";
 import { BsFillPlayFill, BsStopFill } from "react-icons/bs";
 import { BiSave } from "react-icons/bi";
 import { Knob } from "primereact/knob";
@@ -11,30 +15,21 @@ import ElementMaker from "./ElementMaker";
 import Recorder from "../recorder/Recorder";
 
 function TopToolbar({
-  beat,
   projects,
-  grid,
-  setGrid,
-  setUniqueID,
-  uniqueID,
-  setBeat,
   handleBeatChange,
   currentUser,
-  setSelectedInstrument,
   playing,
   player,
-  bpm,
-  setBpm,
-  selected,
-  setSelected,
   user,
   handleSave,
   togglePlaying,
-  name,
-  setName,
-  masterVolume,
-  setMasterVolume,
 }) {
+  const { grid, uniqueID, playing, name, bpm, masterVolume } = useSelector(
+    (state) => state.projectInfo
+  );
+  const { selected, beat } = useSelector((state) => state.instruments);
+  const { updateGrid, updateMasterVol, updateName } = useAppDispatch();
+
   const [showInputEle, setShowInputEle] = useState(false);
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
@@ -50,7 +45,7 @@ function TopToolbar({
         };
       }
     }
-    setGrid(gridCopy);
+    updateGrid(gridCopy);
   };
 
   const notLoggedIn = () => (user ? handleSave() : setOpen(true));
@@ -62,7 +57,7 @@ function TopToolbar({
         <button data-tip data-for="title" className="hover:scale-110">
           <ElementMaker
             value={name}
-            handleChange={(e) => setName(e.target.value)}
+            handleChange={(e) => updateName(e.target.value)}
             handleDoubleClick={() => setShowInputEle(true)}
             handleBlur={() => setShowInputEle(false)}
             showInputEle={showInputEle}
@@ -81,7 +76,7 @@ function TopToolbar({
       {/* RECORDER */}
       <div>
         <button data-tip data-for="record" className="hover:scale-110">
-          <Recorder player={player} togglePlaying={togglePlaying} name={name} />
+          <Recorder togglePlaying={togglePlaying} name={name} />
         </button>
         {/* <ReactTooltip id="record" place="left" type="dark" effect="float">
           <span>CLICK TO RECORD</span>
@@ -116,26 +111,15 @@ function TopToolbar({
       </Popup>
       {/* LOAD MENU */}
       <div className="hover:scale-110">
-        <LoadMenu
-          projects={projects}
-          setGrid={setGrid}
-          setUniqueID={setUniqueID}
-          uniqueID={uniqueID}
-          setName={setName}
-        />
+        <LoadMenu projects={projects} />
       </div>
 
       {/* SOUND MENU */}
       <div className="">
         <label className="pr-2">SOUNDS:</label>
         <SoundMenu
-          beat={beat}
           handleBeatChange={handleBeatChange}
-          setBeat={setBeat}
           currentUser={currentUser}
-          setSelectedInstrument={setSelectedInstrument}
-          selected={selected}
-          setSelected={setSelected}
         />
       </div>
       {/* BPM */}
@@ -148,7 +132,7 @@ function TopToolbar({
           valueColor={"MediumPurple"}
           rangeColor={"White"}
           textColor={"White"}
-          onChange={(e) => setBpm(e.value)}
+          onChange={(e) => updateBPM(e.value)}
         />
         <label className="col-span-1 text-sm">BPM</label>
       </div>
@@ -163,7 +147,7 @@ function TopToolbar({
           valueColor={"MediumPurple"}
           rangeColor={"White"}
           textColor={"White"}
-          onChange={(e) => setMasterVolume(e.value / 100)}
+          onChange={(e) => updateMasterVol(e.value / 100)}
         />
         <label className="col-span-1 text-sm">MASTER</label>
       </div>

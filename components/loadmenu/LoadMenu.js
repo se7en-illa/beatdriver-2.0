@@ -3,17 +3,20 @@ import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/transitions/slide.css";
 import { useRouter } from "next/navigation";
+//redux
+import { useAppDispatch } from "../../lib/utils/dispatch";
 
-function LoadMenu({ projects, setGrid, setUniqueID, setName }) {
+function LoadMenu({ projects }) {
+  const { updateGrid, updateUID, updateName } = useAppDispatch();
   const router = useRouter();
   const handleLoad = (project) => {
     const objGrid = project.grid;
     const orderedKeys = Object.keys(objGrid).sort();
     const loadGrid = orderedKeys.map((row) => objGrid[row]);
 
-    setUniqueID(project.projectId);
-    setName(project.name);
-    setGrid(loadGrid);
+    updateUID(project.projectId);
+    updateName(project.name);
+    updateGrid(loadGrid);
     router.push({
       pathname: `/board/[id]`,
       query: { id: project.projectId },

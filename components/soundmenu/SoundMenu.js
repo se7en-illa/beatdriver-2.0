@@ -2,17 +2,16 @@ import React, { useState } from "react";
 import { Menu, MenuItem, MenuButton, SubMenu } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/transitions/slide.css";
+
+//firebase
 import { collection } from "firebase/firestore";
 import { database } from "../../lib/firebase/firebase";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+//redux
+import { useAppDispatch } from "../../lib/utils/dispatch";
+import { useSelector } from "react-redux";
 
-function SoundMenu({
-  handleBeatChange,
-  currentUser,
-  setSelectedInstrument,
-  selected,
-  setSelected,
-}) {
+function SoundMenu({ handleBeatChange, currentUser }) {
   const drumsRef = collection(database, "built_in_drums");
   const bassRef = collection(database, "built_in_bass");
   const guitarRef = collection(database, "built_in_guitar");
@@ -21,6 +20,8 @@ function SoundMenu({
   const [bass] = useCollectionData(bassRef);
   const [vocals] = useCollectionData(vocalsRef);
   const [guitar] = useCollectionData(guitarRef);
+  const { selected } = useSelector((state) => state.instruments);
+  const { updateSelected, updateSelectedInstrument } = useAppDispatch();
 
   const customSoundsExist = currentUser && currentUser.sounds;
 
@@ -41,8 +42,8 @@ function SoundMenu({
                     key={i}
                     onClick={() => {
                       handleBeatChange(sound.url);
-                      setSelected(`${docs.id}-${sound.name}`);
-                      setSelectedInstrument(`DRUMS`);
+                      updateSelected(`${docs.id}-${sound.name}`);
+                      updateSelectedInstrument(`DRUMS`);
                     }}
                   >
                     {sound.name}
@@ -52,7 +53,6 @@ function SoundMenu({
             );
           })}
         </SubMenu>
-
         <SubMenu label="bass">
           {bass?.map((docs, i) => {
             return (
@@ -63,8 +63,8 @@ function SoundMenu({
                     key={i}
                     onClick={() => {
                       handleBeatChange(sound.url);
-                      setSelected(`${docs.id}-${sound.name}`);
-                      setSelectedInstrument(`BASS`);
+                      updateSelected(`${docs.id}-${sound.name}`);
+                      updateSelectedInstrument(`BASS`);
                     }}
                   >
                     {sound.name}
@@ -84,8 +84,8 @@ function SoundMenu({
                     key={i}
                     onClick={() => {
                       handleBeatChange(sound.url);
-                      setSelected(`${docs.id}-${sound.name}`);
-                      setSelectedInstrument(`GUITAR`);
+                      updateSelected(`${docs.id}-${sound.name}`);
+                      updateSelectedInstrument(`GUITAR`);
                     }}
                   >
                     {sound.name}
@@ -105,8 +105,8 @@ function SoundMenu({
                     key={i}
                     onClick={() => {
                       handleBeatChange(sound.url);
-                      setSelected(`${docs.id}-${sound.name}`);
-                      setSelectedInstrument(`VOCALS`);
+                      updateSelected(`${docs.id}-${sound.name}`);
+                      updateSelectedInstrument(`VOCALS`);
                     }}
                   >
                     {sound.name}
@@ -116,6 +116,7 @@ function SoundMenu({
             );
           })}
         </SubMenu>
+        ;
         {customSoundsExist && (
           <SubMenu label={currentUser?.name}>
             {currentUser?.sounds?.map((sound, i) => (
@@ -124,8 +125,8 @@ function SoundMenu({
                 key={i}
                 onClick={() => {
                   handleBeatChange(sound.url);
-                  setSelected(`${currentUser?.name}-${sound.name}`);
-                  setSelectedInstrument(`USER`);
+                  updateSelected(`${currentUser?.name}-${sound.name}`);
+                  updateSelectedInstrument(`USER`);
                 }}
               >
                 {sound.name}
