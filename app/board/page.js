@@ -5,10 +5,12 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../lib/utils/dispatch";
 //image capture
 import * as htmlToImage from "html-to-image";
+import { useProjectProcess } from "../../lib/utils/projectProcess";
 //components
 import Looper from "../../components/board/Looper";
 import TopToolbar from "../../components/toolbar/TopToolbar";
 import EffectsMenu from "../../components/effectsmenu/EffectsMenu";
+import { steps, initialGrid } from "../../components/board/initialBoard";
 //firebase imports
 import {
   collection,
@@ -24,53 +26,15 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { useRouter } from "next/navigation";
 
-/* THE BOARD*/
-const steps = 8;
-const buttonState = {
-  triggered: false,
-  activated: false,
-  audio: "",
-  instrument: "",
-};
-
-//sets up how big the grid will be
-const initialGrid = [
-  new Array(8).fill(buttonState),
-  new Array(8).fill(buttonState),
-  new Array(8).fill(buttonState),
-  new Array(8).fill(buttonState),
-  new Array(8).fill(buttonState),
-];
-
 const Board = () => {
-  const router = useRouter();
-  const { uniqueID, name, bpm, mute, masterVolume } = useSelector(
-    (state) => state.projectInfo
+  const { selectedInstrument, beat, soundArray } = useSelector(
+    (state) => state.instruments
   );
-  const {
-    selectedInstrument,
-    colorInstrument,
-    selected,
-    beat,
-    soundArray,
-    chorus,
-    phaser,
-    tremolo,
-    moog,
-  } = useSelector((state) => state.instruments);
-  const { updateBeat, updateUID, updateSoundArr, updateColor } =
-    useAppDispatch();
+  const { updateBeat, updateColor } = useAppDispatch();
   const [grid, setGrid] = useState(initialGrid);
   const [playing, setPlaying] = useState(false);
 
   //authentication + user info
-  // const [user] = useAuthState(auth);
-  // const dbRef = collection(database, "users");
-  // const [docs] = useCollectionData(dbRef);
-  // let currentUser;
-  // if (user) {
-  //   currentUser = docs?.find((doc) => doc.email === user.email);
-  // }
   const user = useSelector((state) => state.user.userInfo);
   const ref = createRef(null);
   const dbInstance = query(
@@ -78,6 +42,7 @@ const Board = () => {
     where(`ownerId`, "==", `${user?.uid}`)
   );
   const [projects] = useCollectionData(dbInstance);
+  const [val, setVal] = useState("");
 
   useEffect(() => {
     // handleClear
@@ -94,72 +59,6 @@ const Board = () => {
     }
     setGrid(gridCopy);
   }, []);
-
-  const handleSave = async () => {
-    const image = await takeScreenShot(ref.current);
-
-    if (!uniqueID) {
-      const newProject = await addDoc(collection(database, `projects`), {
-        createdAt: serverTimestamp(),
-        ownerId: user.uid,
-        collaboratorIds: [],
-        username: currentUser.name,
-        name: name,
-        soundArray: soundArray,
-        beat,
-        selected,
-        selectedInstrument,
-        grid: {
-          r1: grid[0],
-          r2: grid[1],
-          r3: grid[2],
-          r4: grid[3],
-          r5: grid[4],
-        },
-        bpm: +bpm,
-        masterVolume: +masterVolume,
-        isPublic: true,
-        screen: image,
-        chorus: chorus,
-        phaser: phaser,
-        tremolo: tremolo,
-        moog: moog,
-      });
-
-      updateUID(newProject.id);
-
-      await setDoc(
-        doc(database, `projects/${newProject.id}`),
-        {
-          projectId: newProject.id,
-          screen: image,
-        },
-        { merge: true }
-      );
-
-      router.push({
-        pathname: `/board/[id]`,
-        query: { id: newProject.id },
-      });
-    }
-  };
-
-  const takeScreenShot = async (node) => {
-    const dataURI = await htmlToImage.toJpeg(node);
-    return dataURI;
-  };
-
-  const [val, setVal] = useState("");
-
-  const handleBeatChange = (value) => {
-    const findSample = soundArray.find((sample) => sample === value);
-    if (!findSample) {
-      let arrayCopy = [...soundArray];
-      arrayCopy.push(value);
-      updateSoundArr(arrayCopy);
-    }
-    setVal(value);
-  };
 
   useEffect(() => {
     const idx = soundArray.indexOf(val);
@@ -179,10 +78,9 @@ const Board = () => {
             {/* TOOLBAR */}
             <TopToolbar
               projects={projects}
-              handleBeatChange={handleBeatChange}
+              setVal={setVal}
               playing={playing}
               user={user}
-              handleSave={handleSave}
               togglePlaying={togglePlaying}
               grid={grid}
               setGrid={setGrid}

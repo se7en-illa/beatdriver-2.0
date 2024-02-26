@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAppDispatch } from "../../lib/utils/dispatch";
+import { useProjectProcess } from "../../lib/utils/projectProcess";
 
 //redux
 import { useSelector } from "react-redux";
@@ -16,17 +17,16 @@ import Recorder from "../recorder/Recorder";
 
 function TopToolbar({
   projects,
-  handleBeatChange,
-  currentUser,
   user,
-  handleSave,
   grid,
   setGrid,
   playing,
   togglePlaying,
+  setVal,
 }) {
   const { name, bpm, masterVolume } = useSelector((state) => state.projectInfo);
   const { updateMasterVol, updateName, updateBPM } = useAppDispatch();
+  const { handleSave } = useProjectProcess();
 
   const [showInputEle, setShowInputEle] = useState(false);
   const [open, setOpen] = useState(false);
@@ -128,10 +128,7 @@ function TopToolbar({
       {/* SOUND MENU */}
       <div className="">
         <label className="pr-2">SOUNDS:</label>
-        <SoundMenu
-          handleBeatChange={handleBeatChange}
-          currentUser={currentUser}
-        />
+        <SoundMenu setVal={setVal} />
       </div>
       {/* BPM */}
       <div className="grid grid-cols-1 m-2 place-items-center hover:scale-110">

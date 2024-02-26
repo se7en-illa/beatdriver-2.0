@@ -3,80 +3,14 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 // redux
-import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../lib/redux/slices/userSlice/userSlice";
-import { setAuth } from "../../lib/redux/slices/userSlice/authSlice";
-// firebase
-import { auth } from "../../lib/firebase/firebase";
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  getAdditionalUserInfo,
-} from "firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { database } from "../../lib/firebase/firebase";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useSelector } from "react-redux";
+// auth
+import { useAuth } from "../../lib/utils/auth";
 
 function Navbar() {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  // database
-  const dbInstance = collection(database, "users");
-  const [docs] = useCollectionData(dbInstance);
-  // authentication
-  const googleAuth = new GoogleAuthProvider();
-  const [userGoogleInfo] = useAuthState(auth);
-  const reduxUser = useSelector((state) => state.user.userInfo);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
-  let currentUser;
-  if (userGoogleInfo) {
-    currentUser = docs?.find((doc) => doc.email === userGoogleInfo.email);
-    dispatch(setUser(currentUser));
-    dispatch(setAuth(true));
-    console.log(reduxUser);
-  }
-
-  const login = async () => {
-    await signInWithPopup(auth, googleAuth).then(async (result) => {
-      const user = result.user;
-      const { isNewUser } = getAdditionalUserInfo(result);
-      if (isNewUser) {
-        await addUser(user.uid, user.displayName, user.email, user.photoURL);
-        dispatch(setUser(user));
-        dispatch(setAuth(true));
-        console.log(reduxUser);
-      } else {
-        console.log("User already exists");
-      }
-    });
-  };
-
-  const addUser = async (userId, displayName, email, photoURL) => {
-    const userRef = doc(database, "users", userId);
-    return await setDoc(userRef, {
-      createdAt: serverTimestamp(),
-      id: userId,
-      name: displayName,
-      email: email,
-      photo: photoURL,
-      location: "UPDATE YOUR LOCATION",
-      bio: "UPDATE YOUR BIO",
-      twitter: "ADD YOUR TWITTER",
-      instagram: "ADD YOUR INSTAGRAM",
-      soundcloud: "ADD YOUR SOUNDCLOUD",
-    });
-  };
-
-  const handleSignOut = () => {
-    auth.signOut();
-    dispatch(setUser(null));
-    dispatch(setAuth(false));
-    router.push("/");
-  };
+  const { login, handleSignOut, userGoogleInfo } = useAuth();
+  const user = useSelector((state) => state.user.userInfo);
 
   return (
     <header>
@@ -107,9 +41,7 @@ function Navbar() {
             <>
               <Link href="/user" className="flex p-2">
                 <Image
-                  src={
-                    currentUser ? currentUser.photo : userGoogleInfo.photoURL
-                  }
+                  src={user ? user.userInfo.photo : userGoogleInfo.photoURL}
                   alt=""
                   width={40}
                   height={40}
@@ -118,7 +50,7 @@ function Navbar() {
 
                 <p className="text-2xl ml-2 pl-1 mt-0.5">
                   {`Hello, ${
-                    currentUser ? currentUser.name : userGoogleInfo.displayName
+                    user ? user.userInfo.name : userGoogleInfo.displayName
                   }!`}
                 </p>
               </Link>

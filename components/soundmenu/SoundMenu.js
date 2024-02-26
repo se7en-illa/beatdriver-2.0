@@ -10,8 +10,9 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 //redux
 import { useAppDispatch } from "../../lib/utils/dispatch";
 import { useSelector } from "react-redux";
+import { useProjectProcess } from "../../lib/utils/projectProcess";
 
-function SoundMenu({ handleBeatChange, currentUser }) {
+function SoundMenu({ setVal }) {
   const drumsRef = collection(database, "built_in_drums");
   const bassRef = collection(database, "built_in_bass");
   const guitarRef = collection(database, "built_in_guitar");
@@ -22,8 +23,9 @@ function SoundMenu({ handleBeatChange, currentUser }) {
   const [guitar] = useCollectionData(guitarRef);
   const { selected } = useSelector((state) => state.instruments);
   const { updateSelected, updateSelectedInstrument } = useAppDispatch();
-
-  const customSoundsExist = currentUser && currentUser.sounds;
+  const { handleBeatChange } = useProjectProcess();
+  const user = useSelector((state) => state.user.userInfo);
+  const customSoundsExist = user && user.sounds;
 
   return (
     <Menu
@@ -41,7 +43,7 @@ function SoundMenu({ handleBeatChange, currentUser }) {
                     label={sound.name}
                     key={i}
                     onClick={() => {
-                      handleBeatChange(sound.url);
+                      handleBeatChange(sound.url, setVal);
                       updateSelected(`${docs.id}-${sound.name}`);
                       updateSelectedInstrument(`DRUMS`);
                     }}
@@ -62,7 +64,7 @@ function SoundMenu({ handleBeatChange, currentUser }) {
                     label={sound.name}
                     key={i}
                     onClick={() => {
-                      handleBeatChange(sound.url);
+                      handleBeatChange(sound.url, setVal);
                       updateSelected(`${docs.id}-${sound.name}`);
                       updateSelectedInstrument(`BASS`);
                     }}
@@ -83,7 +85,7 @@ function SoundMenu({ handleBeatChange, currentUser }) {
                     label={sound.name}
                     key={i}
                     onClick={() => {
-                      handleBeatChange(sound.url);
+                      handleBeatChange(sound.url, setVal);
                       updateSelected(`${docs.id}-${sound.name}`);
                       updateSelectedInstrument(`GUITAR`);
                     }}
@@ -104,7 +106,7 @@ function SoundMenu({ handleBeatChange, currentUser }) {
                     label={sound.name}
                     key={i}
                     onClick={() => {
-                      handleBeatChange(sound.url);
+                      handleBeatChange(sound.url, setVal);
                       updateSelected(`${docs.id}-${sound.name}`);
                       updateSelectedInstrument(`VOCALS`);
                     }}
@@ -124,7 +126,7 @@ function SoundMenu({ handleBeatChange, currentUser }) {
                 label={sound.name}
                 key={i}
                 onClick={() => {
-                  handleBeatChange(sound.url);
+                  handleBeatChange(sound.url, setVal);
                   updateSelected(`${currentUser?.name}-${sound.name}`);
                   updateSelectedInstrument(`USER`);
                 }}
