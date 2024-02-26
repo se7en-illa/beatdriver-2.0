@@ -41,7 +41,7 @@ function Navbar() {
             <>
               <Link href="/user" className="flex p-2">
                 <Image
-                  src={user ? user.userInfo.photo : userGoogleInfo.photoURL}
+                  src={user ? user.photo : userGoogleInfo.photoURL}
                   alt=""
                   width={40}
                   height={40}
@@ -49,9 +49,7 @@ function Navbar() {
                 />
 
                 <p className="text-2xl ml-2 pl-1 mt-0.5">
-                  {`Hello, ${
-                    user ? user.userInfo.name : userGoogleInfo.displayName
-                  }!`}
+                  {`Hello, ${user ? user.name : userGoogleInfo.displayName}!`}
                 </p>
               </Link>
 

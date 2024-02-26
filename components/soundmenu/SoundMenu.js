@@ -120,14 +120,14 @@ function SoundMenu({ setVal }) {
         </SubMenu>
         ;
         {customSoundsExist && (
-          <SubMenu label={currentUser?.name}>
-            {currentUser?.sounds?.map((sound, i) => (
+          <SubMenu label={user?.name}>
+            {user?.sounds?.map((sound, i) => (
               <MenuItem
                 label={sound.name}
                 key={i}
                 onClick={() => {
                   handleBeatChange(sound.url, setVal);
-                  updateSelected(`${currentUser?.name}-${sound.name}`);
+                  updateSelected(`${user?.name}-${sound.name}`);
                   updateSelectedInstrument(`USER`);
                 }}
               >

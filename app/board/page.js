@@ -3,28 +3,15 @@ import React, { useState, useEffect, createRef } from "react";
 //redux
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../lib/utils/dispatch";
-//image capture
-import * as htmlToImage from "html-to-image";
-import { useProjectProcess } from "../../lib/utils/projectProcess";
 //components
 import Looper from "../../components/board/Looper";
 import TopToolbar from "../../components/toolbar/TopToolbar";
 import EffectsMenu from "../../components/effectsmenu/EffectsMenu";
 import { steps, initialGrid } from "../../components/board/initialBoard";
 //firebase imports
-import {
-  collection,
-  doc,
-  serverTimestamp,
-  addDoc,
-  setDoc,
-  where,
-  query,
-} from "firebase/firestore";
-import { database, auth } from "../../lib/firebase/firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { collection, where, query } from "firebase/firestore";
+import { database } from "../../lib/firebase/firebase";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { useRouter } from "next/navigation";
 
 const Board = () => {
   const { selectedInstrument, beat, soundArray } = useSelector(

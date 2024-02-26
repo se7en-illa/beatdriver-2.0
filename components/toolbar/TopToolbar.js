@@ -15,36 +15,13 @@ import LoadMenu from "../loadmenu/LoadMenu";
 import ElementMaker from "./ElementMaker";
 import Recorder from "../recorder/Recorder";
 
-function TopToolbar({
-  projects,
-  user,
-  grid,
-  setGrid,
-  playing,
-  togglePlaying,
-  setVal,
-}) {
+function TopToolbar({ user, grid, setGrid, playing, togglePlaying, setVal }) {
   const { name, bpm, masterVolume } = useSelector((state) => state.projectInfo);
   const { updateMasterVol, updateName, updateBPM } = useAppDispatch();
   const { handleSave } = useProjectProcess();
-
   const [showInputEle, setShowInputEle] = useState(false);
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
-
-  // const handleClear = () => {
-  //   const gridCopy = [...grid];
-  //   for (let i = 0; i < grid.length; i++) {
-  //     for (let j = 0; j < grid[i].length; j++) {
-  //       gridCopy[i][j] = {
-  //         triggered: false,
-  //         activated: false,
-  //         audio: "",
-  //       };
-  //     }
-  //   }
-  //   updateGrid(gridCopy);
-  // };
 
   const handleClear = () => {
     const gridCopy = grid.map((row) =>
@@ -122,7 +99,7 @@ function TopToolbar({
       </Popup>
       {/* LOAD MENU */}
       <div className="hover:scale-110">
-        <LoadMenu projects={projects} grid={grid} setGrid={setGrid} />
+        <LoadMenu setGrid={setGrid} />
       </div>
 
       {/* SOUND MENU */}
